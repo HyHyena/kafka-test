@@ -1,5 +1,6 @@
 package ru.filit.kafka.config;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,17 +16,17 @@ import java.util.Map;
 
 @EnableKafka
 @Configuration
+@RequiredArgsConstructor
 public class KafkaConsumerConfig {
 
-    @Value(value = "${kafka.bootstrapAddress}")
-    private String bootstrapAddress;
+    private final Properties properties;
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(
                 ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                bootstrapAddress);
+                properties.getBootstrapAddress());
         props.put(
                 ConsumerConfig.GROUP_ID_CONFIG,
                 "foo");
@@ -39,8 +40,7 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String>
-    kafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
 
         ConcurrentKafkaListenerContainerFactory<String, String> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
